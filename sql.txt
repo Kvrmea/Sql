@@ -1,0 +1,83 @@
+- Creation d'un tableau Edusign
+
+CREATE TABLE Edusign (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    firstname TEXT NOT NULL,
+    email TEXT NOT NULL,
+    create_at DATETIME NOT NULL
+);
+
+- Inseré le prénom, l'émail et la signature
+
+INSERT INTO Edusign (firstname, email, create_at)
+VALUES
+    ('Hugo', 'hugo@Edusign.fr', '2024-05-09 09:30:00'),
+    ('Marie', 'marie@Edusign.fr', '2024-05-09 09:30:00'),
+    ('Daniel', 'daniel@Edusign.fr',  '2024-05-09 09:30:00'),
+    ('Nicolas', 'nicolas@Edusign.fr', '2024-05-09 09:30:00');
+
+- Création d'un tableau Users
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    firstname TEXT NOT NULL,
+    email TEXT NOT NULL
+);
+
+ALTER TABLE Edusign RENAME TO Edusign_old;
+
+CREATE TABLE Edusign (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    create_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+INSERT INTO users (firstname, email)
+SELECT DISTINCT firstname, email
+FROM Edusign_old;
+
+INSERT INTO Edusign (user_id, create_at)
+SELECT
+    u.id AS user_id,
+    e.create_at
+FROM Edusign_old e
+JOIN users u
+ON e.firstname = u.firstname AND e.email = u.email;
+
+DROP TABLE Edusign_old;
+
+SELECT * FROM users;
+
+SELECT *
+FROM users
+WHERE firstname = 'Hugo';
+
+SELECT *
+FROM users
+WHERE firstname LIKE 'D%';
+
+SELECT COUNT(*) AS total_users
+FROM users;
+
+SELECT COUNT(*) AS count_b_firstname
+FROM users
+WHERE firstname LIKE 'H%';
+
+SELECT firstname
+FROM users;
+
+SELECT id
+FROM users
+WHERE firstname = 'Nicolas';
+
+INSERT INTO Edusign (user_id, create_at)
+VALUES (4, '2024-05-30 09:30:00');
+
+SELECT * 
+FROM Edusign
+WHERE user_id = 4;
+
+SELECT create_at AS date, COUNT(*) AS total_firstname
+FROM Edusign
+GROUP BY create_at;
